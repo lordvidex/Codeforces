@@ -7,43 +7,44 @@ public class Main {
     static FastScanner sc;
     static PrintWriter pw;
     static int cas = 1;
-    static long ans;
+    static StringBuilder ans;
 
+    static Team[] teams;
 
     public static void printOutput() {
-        pw.println("Case #" + cas++ + ": " + ans);
+        pw.println("Case #" + cas++ + ": " + ans.toString());
     }
 
-    static long power(long x, long y, long p)
-    {
-        long res = 1; // Initialize result
-
-        x = x % p; // Update x if it is more than or
-        // equal to p
-
-        if (x == 0)
-            return 0; // In case x is divisible by p;
-
-        while (y > 0)
-        {
-
-            // If y is odd, multiply x with result
-            if ((y & 1) != 0)
-                res = (res * x) % p;
-
-            // y must be even now
-            y = y >> 1; // y = y/2
-            x = (x * x) % p;
-        }
-        return res;
-    }
     public static void solve() {
-        long r = sc.nl();
-        long n = sc.nl();
-        long m = sc.nl();
-        n *= n;
-        ans = power(r,n,m)%m;
-
+        ans = new StringBuilder();
+        int t = sc.ni();
+        int l = sc.ni();
+        teams = new Team[t];
+        for (int i = 0; i < t; i++) {
+            teams[i] = new Team(i + 1);
+        }
+        int[] data;
+        for (int i = 0; i < l; i++) {
+            String log = sc.nextLine();
+             data = Arrays.stream(log.split(" ")).mapToInt(Integer::parseInt).toArray();
+            if (data[4] == 1) {
+                Team t1 = teams[data[1] - 1];
+                // check if the user has solved the problem before
+                Problem p = new Problem(data[2], data[3]);
+                if (!t1.done.contains(p)) {
+                    t1.timestamp += data[0];
+                    t1.done.add(p);
+                    t1.score += data[3] * 100;
+                }
+            }
+        }
+        Arrays.sort(teams);
+        for (int i = 0; i < teams.length; i++) {
+            ans.append(teams[i].id);
+            if (i != teams.length - 1) {
+                ans.append(" ");
+            }
+        }
         printOutput();
     }
 
@@ -57,29 +58,6 @@ public class Main {
 
         sc.close();
         pw.close();
-    }
-
-    static class Point {
-        int x;
-        int y;
-
-        Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Point point = (Point) o;
-            return x == point.x && y == point.y;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(x, y);
-        }
     }
 
     static class FastScanner {
@@ -143,6 +121,57 @@ public class Main {
                 e.printStackTrace();
             }
             return "";
+        }
+    }
+
+    static class Problem {
+        int problem;
+        int input;
+
+        Problem(int problem, int input) {
+            this.problem = problem;
+            this.input = input;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if(o == this)return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Problem problem1 = (Problem) o;
+            return problem == problem1.problem && input == problem1.input;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(problem,input,50,"Jackson");
+        }
+    }
+
+    static class Team implements Comparable<Team> {
+        int score;
+        int timestamp;
+        int id;
+        Set<Problem> done;
+
+        Team(int id) {
+            this.id = id;
+            this.score = 0;
+            this.timestamp = 0;
+            this.done = new HashSet<>();
+        }
+
+        @Override
+        public int compareTo(Team o) {
+            if (o.score != score) {
+                // largest score first
+                return o.score - score;
+            } else if (timestamp != o.timestamp) {
+                // smallest timestamp first
+                return timestamp - o.timestamp;
+            } else {
+                // smallest id first
+                return id - o.id;
+            }
         }
     }
 }
