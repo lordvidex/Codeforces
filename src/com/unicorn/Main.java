@@ -7,44 +7,15 @@ public class Main {
     static FastScanner sc;
     static PrintWriter pw;
     static int cas = 1;
-    static StringBuilder ans;
+    static int ans;
 
-    static Team[] teams;
 
     public static void printOutput() {
-        pw.println("Case #" + cas++ + ": " + ans.toString());
+        pw.println("Case #" + cas++ + ": " + ans);
     }
 
     public static void solve() {
-        ans = new StringBuilder();
-        int t = sc.ni();
-        int l = sc.ni();
-        teams = new Team[t];
-        for (int i = 0; i < t; i++) {
-            teams[i] = new Team(i + 1);
-        }
-        int[] data;
-        for (int i = 0; i < l; i++) {
-            String log = sc.nextLine();
-             data = Arrays.stream(log.split(" ")).mapToInt(Integer::parseInt).toArray();
-            if (data[4] == 1) {
-                Team t1 = teams[data[1] - 1];
-                // check if the user has solved the problem before
-                Problem p = new Problem(data[2], data[3]);
-                if (!t1.done.contains(p)) {
-                    t1.timestamp += data[0];
-                    t1.done.add(p);
-                    t1.score += data[3] * 100;
-                }
-            }
-        }
-        Arrays.sort(teams);
-        for (int i = 0; i < teams.length; i++) {
-            ans.append(teams[i].id);
-            if (i != teams.length - 1) {
-                ans.append(" ");
-            }
-        }
+
         printOutput();
     }
 
@@ -121,57 +92,6 @@ public class Main {
                 e.printStackTrace();
             }
             return "";
-        }
-    }
-
-    static class Problem {
-        int problem;
-        int input;
-
-        Problem(int problem, int input) {
-            this.problem = problem;
-            this.input = input;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if(o == this)return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Problem problem1 = (Problem) o;
-            return problem == problem1.problem && input == problem1.input;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(problem,input,50,"Jackson");
-        }
-    }
-
-    static class Team implements Comparable<Team> {
-        int score;
-        int timestamp;
-        int id;
-        Set<Problem> done;
-
-        Team(int id) {
-            this.id = id;
-            this.score = 0;
-            this.timestamp = 0;
-            this.done = new HashSet<>();
-        }
-
-        @Override
-        public int compareTo(Team o) {
-            if (o.score != score) {
-                // largest score first
-                return o.score - score;
-            } else if (timestamp != o.timestamp) {
-                // smallest timestamp first
-                return timestamp - o.timestamp;
-            } else {
-                // smallest id first
-                return id - o.id;
-            }
         }
     }
 }
